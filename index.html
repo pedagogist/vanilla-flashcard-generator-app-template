@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Vanilla Flashcard App Template</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<!-- The font used for the flashcard app. You can change this to any other font. -->
+		<link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet" />
+		<!-- This line loads the CSS file containing the styles for the flashcard app. It can be modified to change the appearance of the app. -->
+		<link rel="stylesheet" href="./index.css" />
+	</head>
+	<body>
+		<!-- These hidden checkboxes store the toggling state of the entries panel and the flashcard. Don't remove them. -->
+		<input type="checkbox" id="toggle-entries-checkbox" hidden />
+		<input type="checkbox" id="flip-card-checkbox" hidden />
+		<main>
+			<!-- The header includes a button to show/hide all flashcard entries. -->
+			<h1 id="header">
+				<label for="toggle-entries-checkbox" id="toggle-entries" title="Show All Entries">|||</label>
+				Vanilla Flashcard App Template
+			</h1>
+			<!-- This section displays a table of all cards for quick access. -->
+			<section id="entries">
+				<div id="entries-inner">
+					<table>
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Word</th>
+								<th>Due Date</th>
+							</tr>
+						</thead>
+						<tbody id="entries-body"></tbody>
+					</table>
+				</div>
+			</section>
+			<!-- The main flashcard section. Clicking flips between front and back. -->
+			<section id="flashcard">
+				<label for="flip-card-checkbox" id="card-inner">
+					<!-- STUDENTS: Start of recommended modifications -->
+					<!-- Add and rearrange HTML elements inside .card-front and .card-back below. -->
+					<div class="card card-front">
+						<h2 id="front-word"></h2>
+					</div>
+					<div class="card card-back">
+						<p>
+							<span id="back-pos"></span>
+							<span id="back-definition"></span>
+						</p>
+						<img id="back-image" />
+						<audio id="back-audio" controls></audio>
+						<video id="back-video" controls autoplay loop muted></video>
+						<!-- Remove the above attributes as needed. -->
+					</div>
+					<!-- STUDENTS: End of recommended modifications -->
+				</label>
+			</section>
+			<!-- Navigation and learning progress buttons for the current flashcard. -->
+			<div id="actions">
+				<button id="btn-back">‹ Back</button>
+				<div id="btns-progress">
+					<button id="btn-again">☹ Again</button>
+					<button id="btn-good">😉 Good</button>
+					<button id="btn-easy">😍 Easy</button>
+				</div>
+				<button id="btn-skip">Skip ›</button>
+			</div>
+		</main>
+		<!-- This line imports the JavaScript file containing the logic for the flashcard app. It can be modified to add functionality to the app. -->
+		<script src="./index.js" type="module"></script>
+	</body>
+</html>
