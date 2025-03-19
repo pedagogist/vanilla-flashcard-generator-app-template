@@ -57,7 +57,7 @@ main {
 	max-width: 60rem;
 }
 
-/* Styles the header with a title and a toggle button for the entries list. */
+/* Styles the header with a title and toggle buttons for the entries list and tools interface. */
 #header {
 	color: #002a44;
 	line-height: 1;
@@ -78,6 +78,186 @@ main {
 
 #toggle-entries:hover {
 	color: #005488;
+}
+
+#toggle-tools {
+	display: block;
+	float: right;
+	margin-left: 1rem;
+	cursor: pointer;
+	transition: color 0.3s;
+	color: #007acc;
+}
+
+#toggle-tools:hover {
+	color: #005488;
+}
+
+/* The #toggle-entries element acts as a label for #toggle-entries-checkbox.
+	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
+	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
+	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
+#toggle-entries-checkbox:checked ~ main #entries {
+	display: block;
+	opacity: 1;
+	@starting-style {
+		opacity: 0;
+	}
+}
+
+/* Toggle visibility of tools interface */
+#toggle-tools-checkbox:checked ~ main :is(#tools-section, #operation-feedback) {
+	display: block;
+	opacity: 1;
+	@starting-style {
+		opacity: 0;
+	}
+}
+
+/* Hide flashcard and the entries list when the tools interface is visible */
+#toggle-tools-checkbox:checked ~ main :is(#entries, #flashcard, #actions) {
+	display: none;
+}
+
+/* Tools interface styles */
+#tools-section {
+	position: relative;
+	grid-row: 2 / 3;
+	grid-column: 1 / 2;
+	height: 100%;
+	background-color: rgba(255, 255, 255, 0.95);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 1rem;
+	display: none;
+	opacity: 0;
+	transition: display 0.3s allow-discrete, opacity 0.3s;
+	z-index: 2;
+}
+
+#tools-container {
+	position: absolute;
+	inset: 0;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.tool-panel {
+	padding: 1.5rem 2rem 2rem;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.tool-panel:last-child {
+	border-bottom: none;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.form-group label {
+	font-weight: bold;
+	color: #002a44;
+}
+
+.form-group input {
+	padding: 0.5rem;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 0.5rem;
+	width: 100%;
+}
+
+#upload-preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-top: 0.5rem;
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+#upload-preview:empty {
+	margin-top: 0;
+}
+
+.preview-image {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: space-between;
+}
+
+.primary-button {
+	background-color: #007acc;
+	color: white;
+	padding: 0.75rem 2rem;
+}
+
+.primary-button:hover {
+	background-color: #005488;
+}
+
+.secondary-button {
+	background-color: #ddf5ff;
+}
+
+.danger-button {
+	background-color: #ffdddd;
+	color: #d9534f;
+}
+
+.danger-button:hover {
+	background-color: #ffcccc;
+}
+
+#operation-feedback {
+	display: none;
+	background-color: white;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 1rem;
+	padding: 2rem;
+}
+
+#operation-progress-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+#operation-progress {
+	width: 100%;
+	height: 1rem;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+#operation-status {
+	text-align: center;
+	font-size: 0.9rem;
+	color: #002a44;
+}
+
+#operation-results {
+	background-color: rgba(0, 0, 0, 0.05);
+	padding: 1rem;
+	border-radius: 0.5rem;
+	min-height: 3rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 /* The entries list, which is overlaid on top of the flashcard area. */
@@ -139,16 +319,19 @@ main {
 	background-color: #f1f1f1;
 }
 
-/* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
-	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
-	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
-	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
-#toggle-entries-checkbox:checked ~ main #entries {
-	display: block;
-	opacity: 1;
-	@starting-style {
-		opacity: 0;
-	}
+#entries tbody td {
+	padding: 0.25rem;
+}
+
+.entries-image {
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 0.25rem;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .row-highlight {
@@ -190,10 +373,10 @@ main {
 	width: 100%;
 	height: 100%;
 	backface-visibility: hidden;
+	overflow: hidden;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 2rem;
 	background-color: #fefefe;
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	font-size: 150%;
@@ -211,49 +394,134 @@ main {
 
 /* Styles for the front side of the card. */
 .card-front {
-	color: #11222d;
 	/* Additional styles here (e.g., background-color: #bbccdd;) */
 }
 
-/* Add styles for additional elements on the front side here. Here is an example: */
+.card-front-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#front-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0.9;
+}
 
 #front-word {
-	font-size: 200%;
+	position: absolute;
+	font-size: 250%;
+	color: white;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+	text-align: center;
+	padding: 1rem;
+	background-color: rgba(127, 127, 127, 0.5);
+	border-radius: 0.5rem;
+	backdrop-filter: blur(10px);
 }
 
 /* Styles for the back side of the card. */
 .card-back {
 	transform: rotateY(180deg);
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	gap: 0.5rem;
-	/* Additional styles here (e.g., background-color: #bbddcc;) */
 }
 
-/* Add styles for additional elements on the back side here. Here are some examples: */
+.card-back-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	overflow-y: auto;
+}
 
-#back-pos {
-	padding: 1px 3px;
-	color: #777;
-	border: 1px solid #777;
-	border-radius: 2px;
+.back-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	padding-bottom: 0.5rem;
+}
+
+#back-word {
+	font-size: 200%;
+	margin: 0;
+	color: #007acc;
+}
+
+.pronunciation {
+	display: flex;
+	gap: 1rem;
+	font-family: monospace;
 	font-size: 90%;
 }
 
+.pronunciation-label {
+	font-weight: bold;
+	color: #555;
+	margin-right: 0.25rem;
+}
+
+.back-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+}
+
+.back-left {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.back-pos-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.back-pos {
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	background-color: #f0f0f0;
+	border-radius: 0.25rem;
+	font-size: 90%;
+	color: #555;
+}
+
+#back-definition {
+	font-size: 110%;
+	margin: 0;
+}
+
+.example-container {
+	font-style: italic;
+	color: #444;
+	border-left: 3px solid #007acc;
+	padding-left: 0.75rem;
+}
+
+#back-example {
+	margin: 0;
+}
+
+.back-right {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
+
 #back-image {
-	grid-column: 2 / 3;
-	grid-row: 1 / 2;
-}
-
-#back-audio {
-	grid-column: 1 / 2;
-	grid-row: 2 / 3;
-}
-
-#back-video {
-	grid-column: 2 / 3;
-	grid-row: 2 / 3;
+	max-height: 100%;
+	object-fit: contain;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* STUDENTS: End of recommended modifications */
@@ -297,4 +565,21 @@ button:hover {
 
 #btn-easy {
 	background-color: #ccccff;
+}
+
+/* Delete button in entries */
+.delete-btn {
+	background-color: transparent;
+	color: #d9534f;
+	padding: 0.25rem 0.5rem;
+	border: none;
+	box-shadow: none;
+	cursor: pointer;
+	font-size: 1.2rem;
+}
+
+.delete-btn:hover {
+	color: #c9302c;
+	background-color: transparent;
+	box-shadow: none;
 }

@@ -12,14 +12,16 @@
 		<link rel="stylesheet" href="./index.css" />
 	</head>
 	<body>
-		<!-- These hidden checkboxes store the toggling state of the entries panel and the flashcard. Don't remove them. -->
+		<!-- These hidden checkboxes store the toggling state of the entries panel, the flashcard and the tools interface. Don't remove them. -->
 		<input type="checkbox" id="toggle-entries-checkbox" hidden />
 		<input type="checkbox" id="flip-card-checkbox" hidden />
+		<input type="checkbox" id="toggle-tools-checkbox" hidden />
 		<main>
 			<!-- The header includes a button to show/hide all flashcard entries. -->
 			<h1 id="header">
 				<label for="toggle-entries-checkbox" id="toggle-entries" title="Show All Entries">|||</label>
 				Vanilla Flashcard App Template
+				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">🖼️</label>
 			</h1>
 			<!-- This section displays a table of all cards for quick access. -->
 			<section id="entries">
@@ -27,32 +29,100 @@
 					<table>
 						<thead>
 							<tr>
-								<th>ID</th>
+								<th>Image</th>
 								<th>Word</th>
 								<th>Due Date</th>
+								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody id="entries-body"></tbody>
 					</table>
 				</div>
 			</section>
+			<!-- Section for flashcard generation, import and export -->
+			<section id="tools-section">
+				<div id="tools-container">
+					<div id="generator-panel" class="tool-panel">
+						<h2>Generate Flashcards from Images</h2>
+						<div class="form-group">
+							<label for="api-key">OpenAI API Key:</label>
+							<input type="password" id="api-key" placeholder="Enter your OpenAI API key" />
+						</div>
+						<div class="form-group">
+							<label for="image-upload">Upload Images:</label>
+							<input type="file" id="image-upload" multiple accept="image/*" />
+							<div id="upload-preview"></div>
+						</div>
+						<div class="form-actions">
+							<button id="btn-generate" class="primary-button">Generate Flashcards</button>
+						</div>
+					</div>
+					<div id="import-export-panel" class="tool-panel">
+						<h2>Import/Export Flashcards</h2>
+						<div class="form-group">
+							<label for="json-upload">Import JSON:</label>
+							<input type="file" id="json-upload" accept="application/json" />
+						</div>
+						<div class="form-actions">
+							<button id="btn-export-json" class="secondary-button">Export to JSON</button>
+						</div>
+					</div>
+					<div id="common-operations-panel" class="tool-panel">
+						<h2>Data Management</h2>
+						<div class="form-actions">
+							<button id="btn-clear-all" class="danger-button">Clear All Data</button>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- Status of the operation in progress -->
+			<div id="operation-feedback">
+				<div id="operation-progress-container">
+					<progress id="operation-progress" value="0" max="100"></progress>
+					<div id="operation-status">Ready</div>
+				</div>
+				<div id="operation-results">Select an operation above to begin</div>
+			</div>
 			<!-- The main flashcard section. Clicking flips between front and back. -->
 			<section id="flashcard">
 				<label for="flip-card-checkbox" id="card-inner">
 					<!-- STUDENTS: Start of recommended modifications -->
-					<!-- Add and rearrange HTML elements inside .card-front and .card-back below. -->
 					<div class="card card-front">
-						<h2 id="front-word"></h2>
+						<div class="card-front-container">
+							<img id="front-image" />
+							<h2 id="front-word"></h2>
+						</div>
 					</div>
 					<div class="card card-back">
-						<p>
-							<span id="back-pos"></span>
-							<span id="back-definition"></span>
-						</p>
-						<img id="back-image" />
-						<audio id="back-audio" controls></audio>
-						<video id="back-video" controls autoplay loop muted></video>
-						<!-- Remove the above attributes as needed. -->
+						<div class="card-back-container">
+							<div class="back-header">
+								<h3 id="back-word"></h3>
+								<div class="pronunciation">
+									<div class="pronunciation-item">
+										<span class="pronunciation-label">UK:</span>
+										<span id="back-pronunciation-uk">—</span>
+									</div>
+									<div class="pronunciation-item">
+										<span class="pronunciation-label">US:</span>
+										<span id="back-pronunciation-us">—</span>
+									</div>
+								</div>
+							</div>
+							<div class="back-content">
+								<div class="back-left">
+									<div id="back-pos-container" class="pos-container"></div>
+									<div class="definition-container">
+										<p id="back-definition"></p>
+									</div>
+									<div class="example-container">
+										<p id="back-example"></p>
+									</div>
+								</div>
+								<div class="back-right">
+									<img id="back-image" />
+								</div>
+							</div>
+						</div>
 					</div>
 					<!-- STUDENTS: End of recommended modifications -->
 				</label>
