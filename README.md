@@ -4,6 +4,18 @@ This is a template of a simple flashcard web application written in HTML, CSS an
 
 Although this template is designed for undergraduate students of a capstone project course in the Education University of Hong Kong, it can also be used by anyone for other projects.
 
+[Try out the template](https://pedagogist.github.io/vanilla-flashcard-generator-app-template/) by producing your first set of flashcards from your own photos using the generation tool.
+
+## Template Versions
+
+This template comes in two versions to accommodate different project needs:
+
+1. **Basic Version**: A simpler version without AI functionality, focusing on core flashcard features using predefined datasets.
+
+2. **AI-Enhanced Version (Current)**: This version includes flashcard generation features powered by generative AI. It allows users to upload multiple images from their devices and generate user-tailored flashcards based on those images using an OpenAI API key. The generated flashcards can be imported and exported along with learning progress data, providing a comprehensive AI-assisted learning experience.
+
+You are currently viewing the **AI-enhanced version**. If your project idea does not involve interaction with AI or you prefer a simpler starting point, please switch to the [basic version](https://github.com/pedagogist/vanilla-flashcard-app-template) instead.
+
 ## Getting Started
 
 > [!NOTE]
@@ -11,40 +23,39 @@ Although this template is designed for undergraduate students of a capstone proj
 > 
 > If you are not new to programming, feel free to use your favourite code editor, the `serve` command, or whatever tools you feel comfortable with.
 
-1. Make sure you are logged in to GitHub. Click the “Fork” button at the top right of this page.
-2. Click “Create fork”.
-3. Open [Visual Studio Code](https://code.visualstudio.com).
+1. Make sure you are logged in to GitHub. Click “Use this template” → “Create a new repository” at the top right of this page.
+2. Pick a name for your project, then click “Create repository”. You may rename it anytime later by clicking the Settings tab on your project page.
+3. Launch [Visual Studio Code](https://code.visualstudio.com).
 4. Click “Clone Git repository” on the Welcome page.
-5. Type in your GitHub username, followed by `/vanilla-flashcard-app-template`, and press <kbd>Enter</kbd>.
+5. Type in your GitHub username, followed by `/` and the project name you just chose, and press <kbd>Enter</kbd>.
 6. Install the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension.
 7. Click the “Go Live” button from the status bar at the bottom to view the app.
 
 ## How It Works
 
-- The app loads flashcard data from a JSON file, dynamically rendering cards with content on both sides.
+- The app uses AI to generate flashcard data from uploaded images, dynamically rendering cards with content on both sides.
 - Users can flip the flashcards by clicking on them and navigate using “Back” and “Skip” buttons, displaying one card at a time.
 - Learning progress is tracked with “Again”, “Good” and “Easy” buttons, which determine the scheduling of flashcards, similar to Anki, and store this data locally.
-- A toggle button in the upper-left corner allows users to view a table of all flashcards, providing an overview of the entire dataset.
+- A toggle button in the upper-left corner allows users to view a table of all flashcards, providing an overview of all generated cards.
+- Another toggle button in the upper-right corner opens the tools interface for generating new flashcards from images, importing/exporting data, and managing the flashcard collection.
 
 ## Your Next Steps
 
-1. Change the dataset by adding new JSON files within the `data` folder and remove `data/example.json`.
-2. Remove all the example resources inside the `res` folder and place your resources referenced in the dataset there.
-3. Update the `import` statement at the top of `index.js`.
-4. Alter HTML elements in the `flashcard` section in `index.html`. Each field in the dataset should correspond to an element with an ID.
-5. Modify the `renderCard` function in `index.js` accordingly to make sure all fields are populated properly.
-6. Adjust the appearance of the flashcards in `index.css` by adding styling rules for each element.
+1. Customise the flashcard fields by modifying the OpenAI API prompt and response schema in `actions.js`.
+2. Alter HTML elements in the `flashcard` section in `index.html` to match your customised fields. Each field should correspond to an element with an ID.
+3. Modify the `renderCard` function in `index.js` accordingly to make sure all fields are populated properly.
+4. Adjust the appearance of the flashcards in `index.css` by adding styling rules for each element.
 
 > [!TIP]
 > Search for “STUDENTS” in the files to quickly locate sections where modifications are recommended.
 
 If you encounter any technical problems or have questions, don’t hesitate to reach out for help! We’re always here for advice and support. <sub>[Only applicable for students at EdUHK.]</sub>
 
-## Customising the Dataset
+## Customising Flashcards Generation
 
-Flashcard data is provided in the [`data/example.json`](/data/example.json) file. This file contains an array of flashcard objects. The fields within are intended as examples, and students should modify or expand these fields to suit their specific project needs. 
+Flashcard data is generated by AI based on uploaded images. The fields and content are determined by the OpenAI API prompt in [`actions.js`](/actions.js). You can customise the fields by modifying the `json_schema` object in the `processImage` function to include different properties that suit your specific project needs.
 
-Experiment with adding or removing cards and fields, and then refresh your browser to see the changes implemented.
+For example, you can add fields like `synonyms`, `antonyms`, `difficulty`, or `category` by updating the schema. After that, remember to update the HTML elements and JavaScript rendering functions accordingly.
 
 ## Designing the Card
 
@@ -52,7 +63,7 @@ To alter the appearance of the flashcards, adjust the CSS stylesheet. Focus on t
 
 ## Modifying the Code
 
-The main functionality is driven by [index.js](/index.js), which handles reading from `example.json` and setting up flashcard interactions. Make adjustments to how cards are displayed by altering JavaScript functions such as `renderCard`.
+The main functionality is driven by [index.js](/index.js), which handles flashcard storage and display interactions, and [actions.js](/actions.js), which manages the AI generation process. Make adjustments to how cards are displayed by altering JavaScript functions such as `renderCard` in `index.js`, or customise the AI generation by modifying the OpenAI API prompt and schema in `actions.js`.
 
 ## Q&A
 
@@ -66,21 +77,25 @@ Let’s take multiple-choice questions as an example. Similar steps can be adapt
 
 1. Prevent the card from flipping when clicking on itself (since we’ll control this with answer buttons instead):
 
-   - In `index.html`:
+   - In `index.html`, search for `card-inner`, click on the text `button` on that line, press <kbd>F2</kbd> (or <kbd>fn</kbd> + <kbd>F2</kbd>), type `div` and press <kbd>Enter</kbd>.
 
-     - Replace `<label for="flip-card-checkbox" id="card-inner">` with `<div id="card-inner">`.
-     - Replace the corresponding ending `</label>` tag below with `</div>`.
+     This change converts the interactive card element into a container that does not accept user interactions.
 
-     These changes ensure that clicking on the card no longer toggles the state of the hidden checkbox that controls the visible side of the card.
+   - In `index.css`, remove the entire `.card-face:hover { … }` ruleset to get rid of the visual effect when you move the mouse over the card.
 
-   - In `index.css`:
+     This change makes it clear to the user that the card itself is not directly interactive and can no longer be clicked.
 
-     - Remove `cursor: pointer;` within the `#card-inner` ruleset (section) such that the cursor remains as the default arrow instead of changing to a hand icon, which typically indicates a clickable button or link.
-     - Remove the entire `.card:hover { … }` ruleset to get rid of the visual effect when you move the mouse over the card.
+   - In `index.js`, delete the following lines:
+     ```js
+     // Flip the card when the card itself is clicked
+     document.getElementById("card-inner").addEventListener("click", event => {
+     	event.currentTarget.dataset.side = event.currentTarget.dataset.side === "front" ? "back" : "front";
+     });
+     ```
 
-     These changes make it clear to the user that the card itself is not directly interactive and can no longer be clicked.
+     This change removes the actual behaviour where clicking causes the card to flip.
 
-2. Ensure that your dataset includes the necessary fields for questions and answers. For this particular example, we will use the following fields:
+2. Modify the OpenAI API schema in `actions.js` such that the generated flashcards contain the necessary fields for questions and answers. For this particular example, we will use the following fields:
 
    - `question`
    - `option1`
@@ -106,19 +121,15 @@ Let’s take multiple-choice questions as an example. Similar steps can be adapt
 
 5. In `index.js`, update the `renderCard` function to populate the question and options on the front side:
    ```js
-   const questionElement = document.getElementById("correctness");
-   const option1Element = document.getElementById("option-1");
-   const option2Element = document.getElementById("option-2");
-   
    function renderCard() {
    	// Reset flashcard to the front side
-   	flipCardCheckbox.checked = false;
+   	document.getElementById("card-inner").dataset.side = "front";
 
    	// Display the current question and answer options
    	const currentCard = cards[currentIndex];
-   	questionElement.textContent = currentCard.question;
-   	option1Element.textContent = currentCard.option1;
-   	option2Element.textContent = currentCard.option2;
+   	document.getElementById("correctness").textContent = currentCard.question;
+   	document.getElementById("option-1").textContent = currentCard.option1;
+   	document.getElementById("option-2").textContent = currentCard.option2;
 
    	// Update the highlighted row and due dates in the card list table
    	updateEntries();
@@ -127,28 +138,25 @@ Let’s take multiple-choice questions as an example. Similar steps can be adapt
 
 6. In the same file, add this piece of code to handle the user’s selection and display feedback on the back side when an option is clicked:
    ```js
-   const correctnessElement = document.getElementById("correctness");
-   const explanationElement = document.getElementById("explanation");
-
    function checkAnswer() {
    	// Flip the flashcard to the back side
-   	flipCardCheckbox.checked = true;
+   	document.getElementById("card-inner").dataset.side = "back";
 
    	// Compare the selected answer with the correct one and show appropriate feedback
    	const currentCard = cards[currentIndex];
    	const selection = this.textContent;
    	if (selection == currentCard.correctAnswer) {
-   		correctnessElement.textContent = "Correct!";
-   		explanationElement.textContent = "You’ve got this! " + currentCard.correctExplanation;
+   		document.getElementById("correctness").textContent = "Correct!";
+   		document.getElementById("explanation").textContent = "You’ve got this! " + currentCard.correctExplanation;
    	} else {
-   		correctnessElement.textContent = "Incorrect!";
-   		explanationElement.textContent = "Not quite! " + currentCard.incorrectExplanation;
+   		document.getElementById("correctness").textContent = "Incorrect!";
+   		document.getElementById("explanation").textContent = "Not quite! " + currentCard.incorrectExplanation;
    	}
    }
 
    // Trigger the function when the option buttons are clicked
-   option1Element.addEventListener("click", checkAnswer);
-   option2Element.addEventListener("click", checkAnswer);
+   document.getElementById("option-1").addEventListener("click", checkAnswer);
+   document.getElementById("option-2").addEventListener("click", checkAnswer);
    ```
 
 7. In `index.css`, add styles for the new elements introduced in steps 3 and 4 to ensure proper layout and appearance. You may structure your new styles as follows:
