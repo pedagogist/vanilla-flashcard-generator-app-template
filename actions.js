@@ -20,7 +20,7 @@ if (apiKey) {
 
 // Image handling
 function handleImageUpload() {
-	uploadPreview.innerHTML = "";
+	uploadPreview.textContent = "";
 
 	for (const file of imageUploadInput.files) {
 		const img = document.createElement("img");
@@ -80,7 +80,7 @@ async function generateFlashcards() {
 
 	// Clear file input
 	imageUploadInput.value = "";
-	uploadPreview.innerHTML = "";
+	uploadPreview.textContent = "";
 
 	return reloadCardsFromDB();
 }
@@ -232,7 +232,7 @@ async function clearAllData() {
 
 			// Clear file input and preview
 			imageUploadInput.value = "";
-			uploadPreview.innerHTML = "";
+			uploadPreview.textContent = "";
 			importJsonInput.value = "";
 
 			// Update status
@@ -275,10 +275,10 @@ async function exportCardsToJson() {
 		const localTime = new Date(currentTime - currentTime.getTimezoneOffset() * 60 * 1000);
 		const localTimeString = localTime.toISOString().slice(0, -5).replace("T", "_").replace(/-|:/g, ""); // Format in YYYYMMDD_HHMMSS format
 
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = `flashcards_export_${localTimeString}.json`;
-		a.click();
+		const anchor = document.createElement("a");
+		anchor.href = url;
+		anchor.download = `flashcards_export_${localTimeString}.json`;
+		anchor.click();
 
 		URL.revokeObjectURL(url);
 

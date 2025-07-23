@@ -1,5 +1,5 @@
 import "./actions.js";
-import { openDB } from "https://cdn.jsdelivr.net/npm/idb@8/+esm";
+import { openDB } from "https://cdn.jsdelivr.net/npm/idb/+esm";
 
 // IndexedDB initialization
 export let db;
@@ -35,18 +35,16 @@ export async function reloadCardsFromDB() {
 
 let currentIndex = 0;
 
-const entriesBody = document.getElementById("entries-body");
-
 /** Creates a table row for each card, allowing quick navigation. */
 function initEntries() {
 	// Clear existing rows
-	entriesBody.innerHTML = "";
+	document.getElementById("entries-body").textContent = "";
 
 	// Build table rows
-	cards.forEach((card, i) => {
+	for (const [index, card] of cards.entries()) {
 		const row = document.createElement("tr");
 		row.addEventListener("click", () => {
-			currentIndex = i;
+			currentIndex = index;
 			renderCard();
 		});
 
@@ -60,24 +58,24 @@ function initEntries() {
 		cellWord.textContent = card.word;
 
 		const cellDue = document.createElement("td");
-		cellDue.textContent = card.progress?.dueDate || "Unseen"; // If the card has not been learnt before, mark it as "Unseen"
+		cellDue.textContent = card.progress?.dueDate ?? "Unseen"; // If the card has not been learnt before, mark it as "Unseen"
 
 		const cellAction = document.createElement("td");
-		const deleteBtn = document.createElement("button");
-		deleteBtn.textContent = "🗑️";
-		deleteBtn.className = "delete-btn";
-		deleteBtn.addEventListener("click", event => {
+		const btnDelete = document.createElement("button");
+		btnDelete.textContent = "🗑️";
+		btnDelete.className = "btn-delete";
+		btnDelete.addEventListener("click", event => {
 			event.stopPropagation(); // Prevent row click
-			deleteCard(card.id, i);
+			deleteCard(card.id, index);
 		});
-		cellAction.appendChild(deleteBtn);
+		cellAction.appendChild(btnDelete);
 
 		row.appendChild(cellImage);
 		row.appendChild(cellWord);
 		row.appendChild(cellDue);
 		row.appendChild(cellAction);
-		entriesBody.appendChild(row);
-	});
+		document.getElementById("entries-body").appendChild(row);
+	}
 }
 
 // Function to delete a card
@@ -114,9 +112,9 @@ async function deleteCard(cardId, index) {
 /** Updates highlighted row and due dates each time we render or change data. */
 function updateEntries() {
 	// Update row highlight and due dates
-	cards.forEach((card, i) => {
-		const row = entriesBody.children[i];
-		row.classList.toggle("row-highlight", i === currentIndex);
+	for (const [index, card] of cards.entries()) {
+		const row = document.getElementById("entries-body").children[index];
+		row.classList.toggle("row-highlight", index === currentIndex);
 
 		const cellDue = row.children[2]; // Due date is at index 2
 		const dueDateString = card.progress?.dueDate;
@@ -130,7 +128,7 @@ function updateEntries() {
 			cellDue.textContent = "Unseen";
 			cellDue.classList.remove("overdue-date");
 		}
-	});
+	}
 }
 
 /**
@@ -145,86 +143,109 @@ const posMapping = {
 	// Add more mappings as needed
 };
 
-// Grabs references to the flashcard UI elements needed to display data.
-const frontWord = document.getElementById("front-word");
-const frontImage = document.getElementById("front-image");
-const backWord = document.getElementById("back-word");
-const backPronunciationUK = document.getElementById("back-pronunciation-uk");
-const backPronunciationUS = document.getElementById("back-pronunciation-us");
-const backPosContainer = document.getElementById("back-pos-container");
-const backDefinition = document.getElementById("back-definition");
-const backExample = document.getElementById("back-example");
-const backImage = document.getElementById("back-image");
-
-const flipCardCheckbox = document.getElementById("flip-card-checkbox");
-const cardInner = document.getElementById("card-inner");
-const transitionHalfDuration = parseFloat(getComputedStyle(cardInner).transitionDuration) * 1000 / 2;
+const transitionHalfDuration = parseFloat(getComputedStyle(document.getElementById("card-inner")).transitionDuration) * 1000 / 2;
 
 /** Renders the current card on both front and back. */
 function renderCard() {
 	if (cards.length === 0) {
-		frontWord.textContent = "No flashcards available";
-		flipCardCheckbox.checked = false;
+		document.getElementById("card-front-word").textContent = "No flashcards available";
+		document.getElementById("card-inner").dataset.side = "front";
 
 		// Clear all fields
-		frontImage.removeAttribute("src");
-		backWord.textContent = "";
-		backPronunciationUK.textContent = "—";
-		backPronunciationUS.textContent = "—";
-		backPosContainer.innerHTML = "";
-		backDefinition.textContent = "";
-		backExample.textContent = "";
-		backImage.removeAttribute("src");
+		document.getElementById("card-front-image").removeAttribute("src");
+		document.getElementById("card-back-word").textContent = "";
+		document.getElementById("card-back-pronunciation-uk").textContent = "—";
+		document.getElementById("card-back-pronunciation-us").textContent = "—";
+		document.getElementById("card-back-pos-container").textContent = "";
+		document.getElementById("card-back-definition").textContent = "";
+		document.getElementById("card-back-example").textContent = "";
+		document.getElementById("card-back-image").removeAttribute("src");
 		return;
 	}
 
 	// STUDENTS: Start of recommended modifications
-	// If there are more fields in the dataset (e.g., synonyms, example sentences),
-	// display them here (e.g., backSynonym.textContent = currentCard.synonym).
+	// If there are more fields in the dataset (e.g., synonyms),
+	// display them here (e.g., document.getElementById("card-back-synonym").textContent = currentCard.synonym).
 
 	// Update the front side with the current card's word
 	const currentCard = cards[currentIndex];
-	frontWord.textContent = currentCard.word;
+	document.getElementById("card-front-word").textContent = currentCard.word;
 
 	// Display image on front side
-	frontImage.src = URL.createObjectURL(currentCard.image);
+	document.getElementById("card-front-image").src = URL.createObjectURL(currentCard.image);
 
 	// Reset flashcard to the front side
-	flipCardCheckbox.checked = false;
+	document.getElementById("card-inner").dataset.side = "front";
 
 	// Wait for the back side to become invisible before updating the content
 	setTimeout(() => {
 		// Update word on back side
-		backWord.textContent = currentCard.word;
+		document.getElementById("card-back-word").textContent = currentCard.word;
 
-		// Update pronunciations
-		backPronunciationUK.textContent = currentCard.pronunciationUK || "—";
-		backPronunciationUS.textContent = currentCard.pronunciationUS || "—";
+		// Update pronunciations, default to "—" if empty
+		document.getElementById("card-back-pronunciation-uk").textContent = currentCard.pronunciationUK || "—";
+		document.getElementById("card-back-pronunciation-us").textContent = currentCard.pronunciationUS || "—";
 
 		// Clear previous parts of speech
-		backPosContainer.innerHTML = "";
+		document.getElementById("card-back-pos-container").textContent = "";
 
 		// Create a span for each part of speech
 		for (const pos of Array.isArray(currentCard.pos) ? currentCard.pos : [currentCard.pos]) {
 			const span = document.createElement("span");
-			span.className = "back-pos";
-			span.textContent = posMapping[pos] || pos;
-			backPosContainer.appendChild(span);
+			span.className = "card-back-pos";
+			span.textContent = posMapping[pos] ?? pos;
+			document.getElementById("card-back-pos-container").appendChild(span);
 		}
 
 		// Update definition
-		backDefinition.textContent = currentCard.definition || "";
+		document.getElementById("card-back-definition").textContent = currentCard.definition ?? "";
 
 		// Update example sentence
-		backExample.textContent = currentCard.exampleSentence || "";
+		document.getElementById("card-back-example").textContent = currentCard.exampleSentence ?? "";
 
 		// Update image on back side
-		backImage.src = URL.createObjectURL(currentCard.image);
+		document.getElementById("card-back-image").src = URL.createObjectURL(currentCard.image);
 	}, transitionHalfDuration);
 	// STUDENTS: End of recommended modifications
 
 	updateEntries();
 }
+
+// Toggle the entries list when the hamburger button in the heading is clicked
+document.getElementById("toggle-entries").addEventListener("click", () => {
+	document.getElementById("entries").hidden = !document.getElementById("entries").hidden;
+});
+
+// Toggle the tools interface when the picture button in the heading is clicked
+document.getElementById("toggle-tools").addEventListener("click", () => {
+	if (document.getElementById("tools").hidden) {
+		// The tools interface and feedback area are currently hidden. Show them.
+		document.getElementById("tools").hidden = false;
+		document.getElementById("operation-feedback").hidden = false;
+
+		// Hide the entries list, flashcard area and actions
+		document.getElementById("entries").hidden = true;
+		document.getElementById("card").hidden = true;
+		document.getElementById("actions").hidden = true;
+
+		// Make the toggle entries button ineffective
+		document.getElementById("toggle-entries").disabled = true;
+	} else {
+		// The tools interface and feedback area are currently visible. Hide them.
+		document.getElementById("tools").hidden = true;
+		document.getElementById("operation-feedback").hidden = true;
+
+		// Restore flashcard area, actions and the toggle entries button, but leave the entries list hidden
+		document.getElementById("card").hidden = false;
+		document.getElementById("actions").hidden = false;
+		document.getElementById("toggle-entries").disabled = false;
+	}
+});
+
+// Flip the card when the card itself is clicked
+document.getElementById("card-inner").addEventListener("click", event => {
+	event.currentTarget.dataset.side = event.currentTarget.dataset.side === "front" ? "back" : "front";
+});
 
 /** Navigates to the previous card. */
 function previousCard() {
@@ -246,7 +267,7 @@ document.getElementById("btn-skip").addEventListener("click", () => {
 });
 
 /**
- * Mapping between the user's selection (Again, Good, Easy) and the number of days to wait before reviewing the card again.
+ * Mapping between the user's selection (Again, Good, Easy) and the number of days until the due date.
  */
 const dayOffset = { again: 1, good: 3, easy: 7 };
 

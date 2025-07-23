@@ -7,6 +7,7 @@
 
 html {
 	text-size-adjust: none;
+	interpolate-size: allow-keywords;
 }
 
 body {
@@ -20,7 +21,19 @@ img, picture, video, canvas, svg {
 }
 
 input, button, textarea, select {
+	box-sizing: inherit;
+	color: inherit;
 	font: inherit;
+	line-height: inherit;
+}
+
+button {
+	appearance: none;
+	border: none;
+	background: none;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -28,7 +41,83 @@ h1, h2, h3, h4, h5, h6 {
 	text-wrap: balance;
 	overflow-wrap: break-word;
 }
+
+[hidden] {
+	display: none;
+}
 /* End of CSS reset */
+
+/*
+Transition styles - Convenient animation for element appearance and disappearance
+They can be combined such that multiple transitions are performed simultaneously.
+Note that these classes are only for transitions when showing and hiding elements with the `.hidden` element property.
+They are not for trivial transitions such as hovering effect.
+*/
+.transition-fade,
+.transition-zoom,
+.transition-slide-from-top,
+.transition-slide-from-bottom,
+.transition-slide-from-left,
+.transition-slide-from-right {
+	/* Any custom property name will work. It is just a placeholder */
+	--transition-fade: _;
+	--transition-zoom: _;
+	--transition-slide: _;
+	transition: display 0.3s allow-discrete, var(--transition-fade), var(--transition-zoom), var(--transition-slide);
+}
+
+.transition-fade {
+	--transition-fade: opacity 0.3s;
+	opacity: 1;
+	&[hidden] {
+		opacity: 0;
+	}
+	@starting-style {
+		opacity: 0;
+	}
+}
+
+.transition-zoom {
+	--transition-zoom: scale 0.3s;
+	scale: 1;
+	&[hidden] {
+		scale: 0;
+	}
+	@starting-style {
+		scale: 0;
+	}
+}
+
+.transition-slide-from-top {
+	--translate-y: -150vw;
+}
+
+.transition-slide-from-bottom {
+	--translate-y: 150vw;
+}
+
+.transition-slide-from-left {
+	--translate-x: -150vw;
+}
+
+.transition-slide-from-right {
+	--translate-x: 150vw;
+}
+
+.transition-slide-from-top,
+.transition-slide-from-bottom,
+.transition-slide-from-left,
+.transition-slide-from-right {
+	--transition-slide: translate 0.3s;
+	translate: none;
+	&[hidden] {
+		translate: var(--translate-x, 0) var(--translate-y, 0);
+	}
+	@starting-style {
+		translate: var(--translate-x, 0) var(--translate-y, 0);
+	}
+}
+/* End of Transition styles */
 
 /* Applies a custom font and centers the page using a grid layout. */
 html {
@@ -46,7 +135,7 @@ body {
 	display: contents;
 }
 
-/* Arranges the main content into rows for header, flashcard area, and actions. */
+/* Arranges the main content into rows for heading, flashcard area and actions. */
 main {
 	padding: 1rem;
 	width: 100%;
@@ -57,8 +146,8 @@ main {
 	max-width: 60rem;
 }
 
-/* Styles the header with a title and toggle buttons for the entries list and tools interface. */
-#header {
+/* Styles the heading with a title and toggle buttons for the entries list and tools interface. */
+#heading {
 	color: #002a44;
 	line-height: 1;
 }
@@ -69,7 +158,6 @@ main {
 	font-size: 70%;
 	font-weight: 900;
 	text-align: center;
-	cursor: pointer;
 	transform: rotate(88deg);
 	transform-origin: 60% 60%;
 	transition: color 0.3s;
@@ -84,7 +172,6 @@ main {
 	display: block;
 	float: right;
 	margin-left: 1rem;
-	cursor: pointer;
 	transition: color 0.3s;
 	color: #007acc;
 }
@@ -93,34 +180,8 @@ main {
 	color: #005488;
 }
 
-/* The #toggle-entries element acts as a label for #toggle-entries-checkbox.
-	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
-	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
-	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
-#toggle-entries-checkbox:checked ~ main #entries {
-	display: block;
-	opacity: 1;
-	@starting-style {
-		opacity: 0;
-	}
-}
-
-/* Toggle visibility of tools interface */
-#toggle-tools-checkbox:checked ~ main :is(#tools-section, #operation-feedback) {
-	display: block;
-	opacity: 1;
-	@starting-style {
-		opacity: 0;
-	}
-}
-
-/* Hide flashcard and the entries list when the tools interface is visible */
-#toggle-tools-checkbox:checked ~ main :is(#entries, #flashcard, #actions) {
-	display: none;
-}
-
 /* Tools interface styles */
-#tools-section {
+#tools {
 	position: relative;
 	grid-row: 2 / 3;
 	grid-column: 1 / 2;
@@ -128,9 +189,6 @@ main {
 	background-color: rgba(255, 255, 255, 0.95);
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	border-radius: 1rem;
-	display: none;
-	opacity: 0;
-	transition: display 0.3s allow-discrete, opacity 0.3s;
 	z-index: 2;
 }
 
@@ -199,31 +257,46 @@ main {
 	justify-content: space-between;
 }
 
-.primary-button {
+.btn {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 0.5rem 2rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn:hover {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
 	background-color: #007acc;
 	color: white;
 	padding: 0.75rem 2rem;
 }
 
-.primary-button:hover {
+.btn-primary:hover {
 	background-color: #005488;
 }
 
-.secondary-button {
+.btn-secondary {
 	background-color: #ddf5ff;
 }
 
-.danger-button {
+.btn-secondary:hover {
+	background-color: #c1eaff;
+}
+
+.btn-danger {
 	background-color: #ffdddd;
 	color: #d9534f;
 }
 
-.danger-button:hover {
+.btn-danger:hover {
 	background-color: #ffcccc;
 }
 
 #operation-feedback {
-	display: none;
 	background-color: white;
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	border-radius: 1rem;
@@ -268,9 +341,6 @@ main {
 	height: 100%;
 	background-color: rgba(255, 255, 255, 0.9);
 	border: 1px solid rgba(0, 0, 0, 0.1);
-	display: none;
-	opacity: 0;
-	transition: display 0.3s allow-discrete, opacity 0.3s;
 	z-index: 1;
 	border-radius: 1rem;
 }
@@ -343,8 +413,17 @@ main {
 	font-weight: bold;
 }
 
+.btn-delete {
+	color: #d9534f;
+	font-size: 1.2rem;
+}
+
+.btn-delete:hover {
+	color: #c9302c;
+}
+
 /* The flashcard container, which uses perspective to allow a 3D flip animation. */
-#flashcard {
+#card {
 	grid-row: 2 / 3;
 	grid-column: 1 / 2;
 	height: 100%;
@@ -354,24 +433,19 @@ main {
 
 #card-inner {
 	position: absolute;
-	width: 100%;
-	height: 100%;
+	inset: 0;
 	transform-style: preserve-3d;
 	transition: transform 0.6s;
-	cursor: pointer;
 }
 
-/* Rotates the card around the Y-axis when the checkbox is checked such that the back side is visible.
-	It makes use of the same technique as the entries list to toggle the checkbox state when the card is clicked.
-	When the checkbox is no longer checked, the card is rotated back to the front side. */
-#flip-card-checkbox:checked ~ main #card-inner {
+/* Rotates the card around the Y-axis such that the back side is visible when `dataset.side` is set to "back" in JavaScript. */
+#card-inner[data-side="back"] {
 	transform: rotateY(180deg);
 }
 
-.card {
+.card-face {
 	position: absolute;
-	width: 100%;
-	height: 100%;
+	inset: 0;
 	backface-visibility: hidden;
 	overflow: hidden;
 	display: flex;
@@ -385,7 +459,7 @@ main {
 	transition: box-shadow 0.3s;
 }
 
-.card:hover {
+.card-face:hover {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -406,14 +480,14 @@ main {
 	align-items: center;
 }
 
-#front-image {
+#card-front-image {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	opacity: 0.9;
 }
 
-#front-word {
+#card-front-word {
 	position: absolute;
 	font-size: 250%;
 	color: white;
@@ -439,9 +513,10 @@ main {
 	flex-direction: column;
 	gap: 1rem;
 	overflow-y: auto;
+	text-align: left;
 }
 
-.back-header {
+.card-back-header {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
@@ -449,44 +524,44 @@ main {
 	padding-bottom: 0.5rem;
 }
 
-#back-word {
+#card-back-word {
 	font-size: 200%;
 	margin: 0;
 	color: #007acc;
 }
 
-.pronunciation {
+.card-back-pronunciation {
 	display: flex;
 	gap: 1rem;
 	font-family: monospace;
 	font-size: 90%;
 }
 
-.pronunciation-label {
+.card-back-pronunciation-label {
 	font-weight: bold;
 	color: #555;
 	margin-right: 0.25rem;
 }
 
-.back-content {
+.card-back-content {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 1rem;
 }
 
-.back-left {
+.card-back-left {
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
 }
 
-.back-pos-container {
+.card-back-pos-container {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
 }
 
-.back-pos {
+.card-back-pos {
 	display: inline-block;
 	padding: 0.25rem 0.5rem;
 	background-color: #f0f0f0;
@@ -495,29 +570,29 @@ main {
 	color: #555;
 }
 
-#back-definition {
+#card-back-definition {
 	font-size: 110%;
 	margin: 0;
 }
 
-.example-container {
+.card-back-example-container {
 	font-style: italic;
 	color: #444;
 	border-left: 3px solid #007acc;
 	padding-left: 0.75rem;
 }
 
-#back-example {
+#card-back-example {
 	margin: 0;
 }
 
-.back-right {
+.card-back-right {
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
 }
 
-#back-image {
+#card-back-image {
 	max-height: 100%;
 	object-fit: contain;
 	border-radius: 0.5rem;
@@ -533,28 +608,12 @@ main {
 	gap: 0.5rem;
 }
 
-button {
-	appearance: none;
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	padding: 0.5rem 2rem;
-	border-radius: 0.5rem;
-	background-color: #ddf5ff;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	transition: background-color 0.3s, box-shadow 0.3s;
-	cursor: pointer;
-}
-
-button:hover {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	background-color: #c1eaff;
-}
-
 #btns-progress {
 	display: flex;
 	gap: 0.5rem;
 }
 
-/* Different background colours help distinguish button actions. */
+/* Styles the progress buttons with different background colours to make them stand out. */
 #btn-again {
 	background-color: #ffcccc;
 }
@@ -565,21 +624,4 @@ button:hover {
 
 #btn-easy {
 	background-color: #ccccff;
-}
-
-/* Delete button in entries */
-.delete-btn {
-	background-color: transparent;
-	color: #d9534f;
-	padding: 0.25rem 0.5rem;
-	border: none;
-	box-shadow: none;
-	cursor: pointer;
-	font-size: 1.2rem;
-}
-
-.delete-btn:hover {
-	color: #c9302c;
-	background-color: transparent;
-	box-shadow: none;
 }
