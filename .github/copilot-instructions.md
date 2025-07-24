@@ -27,6 +27,9 @@ This application runs directly by opening `index.html` in a browser - no build s
 ### JavaScript
 - Name variables, constants and functions in camelCase.
 - Use full, descriptive variable names instead of abbreviations (e.g. `index` instead of `i`, `event` instead of `e`).
+- Use double quotes for simple strings.
+- Use single quotes for strings that contain double quotes.
+- Use template literals for strings with interpolations.
 - Use modern ECMAScript features:
   - Optional chaining (`?.`) and nullish coalescing (`??`, `??=`)
   - `Object.groupBy(items, item => item.key)` for array grouping
