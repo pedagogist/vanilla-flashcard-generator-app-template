@@ -31,7 +31,7 @@ This application runs directly by opening `index.html` in a browser - no build s
   - Optional chaining (`?.`) and nullish coalescing (`??`, `??=`)
   - `Object.groupBy(items, item => item.key)` for array grouping
   - `array.at(-1)` for last element access
-  - `for...of` loops over `.forEach()` (Use `.entries()` if index is required)
+  - `for...of` loops over `.forEach()` (Use `.entries()` if index is required. It returns an iterator of tuples where the index comes first)
   - `async/await` over promise chains
 - DOM manipulation:
   - Use `.textContent` over `.innerHTML`.
